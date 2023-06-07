@@ -1,0 +1,47 @@
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import MovieCard from './MovieCard';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
+
+const Row = ({ title, fetchURL, rowID }) => {
+    const [movies, setMovies] = useState([]);
+    useEffect(() => {
+        axios.get(fetchURL).then((response) => {
+            setMovies(response.data.results)
+        })
+    }, [fetchURL])
+
+    const sliderLeft = () => {
+        var slider = document.getElementById('slider' + rowID)
+        slider.scrollLeft = slider.scrollLeft - 500
+    }
+    const sliderRight = () => {
+        var slider = document.getElementById('slider' + rowID)
+        slider.scrollLeft = slider.scrollLeft + 500
+    }
+
+    return (
+        <>
+            <h2 className='text-white font-bold md:text-xl p-4'>{title}</h2>
+            <div className='relative flex items-center group'>
+                <MdChevronLeft
+                    onClick={sliderLeft}
+                    className='bg-white rounded-full absolute opacity-60 hover:opacity-100 cursor-pointer z-10 hidden group-hover:block'
+                    size={40}
+                />
+                <div id={'slider' + rowID} className='w-full h-full overflow-x-scroll whitespace-nowrap scrollbar-hide scroll-smooth'>
+                    {movies.map((item, id) => {
+                        return <MovieCard item={item} key={id} />
+                    })}
+                </div>
+                <MdChevronRight
+                    onClick={sliderRight}
+                    className='bg-white rounded-full  opacity-60 hover:opacity-100 cursor-pointer z-10'
+                    size={40}
+                />
+            </div>
+        </>
+    )
+}
+
+export default Row
